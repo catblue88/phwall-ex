@@ -1,73 +1,49 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect } from "react";
 
-type Event = "connect" | "disconnect";
-
-interface Phantom {
-  on: (event: Event, callback: () => void) => void;
-  connect: () => Promise<void>;
-  disconnect: () => Promise<void>;
-}
-
-const ConnectToPhantom = () => {
-  const [phantom, setPhantom] = useState<Phantom | null>(null);
-  let phaVal = null
-  
-  if ("solana" in window) {
-    phaVal = window["solana"]
-    useEffect(() =>  setPhantom(phaVal), [])
-  }
-
-  const [connected, setConnected] = useState(false);
+function ConnectToPhantom() {
+  const [isConnected, setIsConnected] = useState(false);
+  const [phantom, setPhantom] = useState(null);
 
   useEffect(() => {
-    phantom?.on("connect", () => {
-      setConnected(true);
-    });
+    const checkPhantomInstalled = async () => {
+      const isPhantomInstalled = window.phantom?.solana?.isPhantom;
+      if (isPhantomInstalled) {
+        const provider =  window.phantom?.solana
+        await provider.connect();
+        setPhantom(provider);
+        setIsConnected(true);
+      }
+    };
+    checkPhantomInstalled();
+  }, []);
 
-    phantom?.on("disconnect", () => {
-      setConnected(false);
-    });
-  }, [phantom]);
 
-  const connectHandler = () => {
-    phantom?.connect();
-  };
+  const toggleConnection = async () => {
+    if (!phantom) return;
 
-  const disconnectHandler = () => {
-    phantom?.disconnect();
-  };
-
-  if (phantom) {
-    if (connected) {
-      return (
-        <button
-          onClick={disconnectHandler}
-          className="py-2 px-4 border border-purple-700 rounded-md text-sm font-medium text-purple-700 whitespace-nowrap hover:bg-purple-200"
-        >
-          Disconnect from Phantom
-        </button>
-      );
+    if (isConnected) {
+      await phantom.disconnect();
+      setIsConnected(false);
+    } else {
+      await phantom.connect();
+      setIsConnected(true);
     }
-
-    return (
-      <button
-        onClick={connectHandler}
-        className="bg-purple-500 py-2 px-4 border border-transparent rounded-md text-sm font-medium text-white whitespace-nowrap hover:bg-opacity-75"
-      >
-        Connect to Phantom
-      </button>
-    );
-  }
+  };
 
   return (
-    <a
-      href="https://phantom.app/"
-      target="_blank"
-      className="bg-purple-500 px-4 py-2 border border-transparent rounded-md text-base font-medium text-white"
-    >
-      Get Phantom
-    </a>
+    <div>
+      {phantom ? (
+        <button onClick={toggleConnection}>
+          {isConnected ? "Disconnect" : "Connect"}
+        </button>
+      ) : (
+        <a href="https://phantom.app/" target="_blank" rel="noreferrer">
+
+          Activate Phantom
+        </a>
+      )}
+    </div>
   );
-};
+}
 
 export default ConnectToPhantom;
