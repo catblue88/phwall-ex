@@ -10,12 +10,12 @@ interface Phantom {
 
 const ConnectToPhantom = () => {
   const [phantom, setPhantom] = useState<Phantom | null>(null);
-
-  useEffect(() => {
-    if ("solana" in window) {
-      setPhantom(window["solana"]);
-    }
-  }, []);
+  let phaVal = null
+  
+  if ("solana" in window) {
+    phaVal = window["solana"]
+    useEffect(() =>  setPhantom(phaVal), [])
+  }
 
   const [connected, setConnected] = useState(false);
 
