@@ -6,9 +6,9 @@ function ConnectToPhantom() {
 
   useEffect(() => {
     const checkPhantomInstalled = async () => {
-      const isPhantomInstalled = window.phantom?.solana?.isPhantom;
+      const isPhantomInstalled = (window as any).phantom?.solana?.isPhantom;
       if (isPhantomInstalled) {
-        const provider =  window.phantom?.solana
+        const provider =  (window as any).phantom?.solana
         await provider.connect();
         setPhantom(provider);
         setIsConnected(true);
