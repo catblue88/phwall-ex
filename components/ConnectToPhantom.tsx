@@ -30,6 +30,19 @@ function ConnectToPhantom() {
     }
   };
 
+  const tryConnect = async () => {
+    try {
+      const response = await (window as any).phantom.solana.request({ method: "connect" });
+      (window as any).phantom.solana.on("connect", () => console.log("connected!"))
+      console.log((window as any).phantom.solana.isConnected)
+      console.log("pubkey", response)
+    } 
+    catch(err) {
+      console.log(err)
+    }
+  }
+
+
   return (
     <div>
       {phantom ? (
@@ -37,10 +50,13 @@ function ConnectToPhantom() {
           {isConnected ? "Disconnect" : "Connect"}
         </button>
       ) : (
-        <a href="https://phantom.app/" target="_blank" rel="noreferrer">
+        // <a href="https://phantom.app/" target="_blank" rel="noreferrer">
 
-          Activate Phantom
-        </a>
+        //   Activate Phantom
+        // </a>
+        <button onClick={tryConnect}>
+          Try Connect
+        </button>
       )}
     </div>
   );
