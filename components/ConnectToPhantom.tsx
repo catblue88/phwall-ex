@@ -19,6 +19,7 @@ function ConnectToPhantom() {
 
 
   const toggleConnection = async () => {
+    
     if (!phantom) return;
 
     if (isConnected) {
@@ -28,7 +29,11 @@ function ConnectToPhantom() {
       await phantom.connect();
       setIsConnected(true);
     }
-  };
+  }
+
+  const check = ()=> {
+    console.log(`Phantom present? ${(window as any).phantom?.solana?.isPhantom}`)
+  }
 
   const tryConnect = async () => {
     try {
@@ -50,14 +55,21 @@ function ConnectToPhantom() {
           {isConnected ? "Disconnect" : "Connect"}
         </button>
       ) : (
-        // <a href="https://phantom.app/" target="_blank" rel="noreferrer">
+        <a href="https://phantom.app/" target="_blank" rel="noreferrer">
 
-        //   Activate Phantom
-        // </a>
-        <button onClick={tryConnect}>
-          Try Connect
-        </button>
+          Activate Phantom
+        </a>
+        // <button onClick={tryConnect}>
+        //   Try Connect
+        // </button>
       )}
+      <div>
+          <button onClick={check}>
+            check if present
+          </button>
+
+      </div>
+ 
     </div>
   );
 }
